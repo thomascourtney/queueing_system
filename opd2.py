@@ -92,13 +92,13 @@ print("\n")
 print(f"Day\t\t\tLq_mmc")
 print("-" * 50)
 for day, data in day_data_combined.items():
-    print(f"{day.ljust(10)}:\t\t{Lq_mmc:.4f}")
+    print(f"{day.ljust(10)}\t\t{Lq_mmc:.4f}")
 
 print("\n")
 print(f"Day\t\t\tLs_mmc")
 print("-" * 50)
 for day, data in day_data_combined.items():
-    print(f"{day.ljust(10)}:\t\t{Ls_mmc:.4f}")
+    print(f"{day.ljust(10)}\t\t{Ls_mmc:.4f}")
 
 print("\n")
 print("Day\t\tWs")
@@ -107,7 +107,7 @@ for day, data in day_data_combined.items():
     service_rate = day_data_services[day]["service_rate"]
     Wq = data["Wq"]
     Ws = Wq + (1 / service_rate)
-    print(f"{day.ljust(10)}:\t\t{Ws:.4f}")
+    print(f"{day.ljust(10)}\t\t{Ws:.4f}")
 
 
 def calculate_utilization(arrival_rate, service_rate, num_servers):
