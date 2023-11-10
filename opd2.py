@@ -67,6 +67,12 @@ for day, data in day_data_combined.items():
     data["Ls_calc"] = Ls
     data["Ws"] = Ls / arrival_rate
     data["Wq"] = Lq / arrival_rate
+    c = 1  # Number of servers
+    rho = arrival_rate / (c * service_rate)
+    W = data["Ls"] / arrival_rate
+    Lq_mmc = ((arrival_rate * W)**c) / (math.factorial(c) * (1 - rho)**2)
+    Lq= data["Lq"]
+    Ls_mmc = Lq + (arrival_rate / service_rate)
 
 print("\n")
 # Display the results nicely
@@ -74,6 +80,7 @@ print("Day\t\t\tWs (h)\t\tWq (h)")
 print("-" * 50)
 for day, data in day_data_combined.items():
     print(f"{day.ljust(10)}\t\t{data['Ws']:.4f}\t\t{data['Wq']:.4f}")
+    
 
 print("\n")
 print(f"Day\t\t\tLs_calc")
@@ -81,16 +88,80 @@ print("-" * 50)
 for day, data in day_data_combined.items():
     print(f"{day.ljust(10)}\t\t{data['Ls_calc']:.4f}")
 
+print("\n")
+print(f"Day\t\t\tLq_mmc")
+print("-" * 50)
+for day, data in day_data_combined.items():
+    print(f"{day.ljust(10)}:\t\t{Lq_mmc:.4f}")
 
 print("\n")
-for c_val in range(1, 5):
-    print(f"\nLq calc Results for c = {c_val}:")
-    print("-" * 50)
-    for day, data in day_data_combined.items():
-        arrival_rate = day_data_services[day]["arrival_rate"]
-        service_rate = day_data_services[day]["service_rate"]
-        rho = arrival_rate / (service_rate * c_val)
-        Lq = rho / (1 - rho)
-        data[f"Lq_calc_c{c_val}"] = Lq
-        print(f"{day.ljust(15)}\t\t{data[f'Lq_calc_c{c_val}']:.4f}")
+print(f"Day\t\t\tLs_mmc")
+print("-" * 50)
+for day, data in day_data_combined.items():
+    print(f"{day.ljust(10)}:\t\t{Ls_mmc:.4f}")
+
+print("\n")
+print("Day\t\tWs")
+print("-" * 20)
+for day, data in day_data_combined.items():
+    service_rate = day_data_services[day]["service_rate"]
+    Wq = data["Wq"]
+    Ws = Wq + (1 / service_rate)
+    print(f"{day.ljust(10)}:\t\t{Ws:.4f}")
+
+
+def calculate_utilization(arrival_rate, service_rate, num_servers):
+    return (arrival_rate / (service_rate * num_servers)) * 100
+
+def calculate_waiting_time_in_system(Ls, arrival_rate):
+    return Ls / arrival_rate
+
+def calculate_waiting_time_in_queue(Lq, arrival_rate):
+    return Lq / arrival_rate
+
+def calculate_values_for_servers(day, num_servers):
+    arrival_rate = day_data_services[day]["arrival_rate"]
+    service_rate = day_data_services[day]["service_rate"]
+    Ls = day_data_combined[day]["Ls"]
+    Lq = day_data_combined[day]["Lq"]
+
+    utilization = calculate_utilization(arrival_rate, service_rate, num_servers)
+    Ws = calculate_waiting_time_in_system(Ls, arrival_rate)
+    Wq = calculate_waiting_time_in_queue(Lq, arrival_rate)
+
+    return utilization, Ws, Wq
+
+# Display the table header
+print("Number of Servers\tUtilization (%)\tMean Time in System\tMean Time in Queue\tDay")
+print("-" * 90)
+
+# Calculate and display values for different numbers of servers
+for day in day_data_combined.keys():
+    for num_servers in range(1, 5):
+        utilization, Ws, Wq = calculate_values_for_servers(day, num_servers)
+        print(f"{num_servers}\t\t\t{utilization:.3f}\t\t\t{Ws:.3f}\t\t\t{Wq:.3f}\t\t\t{day}")
+
+
+
+def calculate_values_for_dispensers(day, num_dispensers):
+    arrival_rate = day_data_services[day]["arrival_rate"]
+    service_rate = day_data_services[day]["service_rate"]
+    Ls = day_data_combined[day]["Ls"]
+    Lq = day_data_combined[day]["Lq"]
+
+    utilization = calculate_utilization(arrival_rate, service_rate, num_dispensers)
+    Ws = calculate_waiting_time_in_system(Ls, arrival_rate)
+    Wq = calculate_waiting_time_in_queue(Lq, arrival_rate)
+
+    return utilization, Ws, Wq
+
+# Display the table header
+print("Number of Dispensers\tUtilization (%)\tMean Time in System\tMean Time in Queue\tDay")
+print("-" * 90)
+
+# Calculate and display values for different numbers of dispensers
+for day in day_data_combined.keys():
+    for num_dispensers in range(1, 5):
+        utilization, Ws, Wq = calculate_values_for_dispensers(day, num_dispensers)
+        print(f"{num_dispensers}\t\t\t{utilization:.3f}\t\t\t{Ws:.3f}\t\t\t{Wq:.3f}\t\t\t{day}")
 
