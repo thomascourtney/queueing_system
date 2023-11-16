@@ -60,7 +60,7 @@ day_data_combined = {
 
 def calculate_and_display_metrics(day_data_combined, day_data_services, c):
     print("\nDay\t\t\tWs (h)\t\tWq (h)\t\tLq_mmc\t\tLs_mmc")
-    print("-" * 70)
+    print("-" * 85)
 
     for day, data in day_data_combined.items():
         arrival_rate = day_data_services[day]["arrival_rate"]
@@ -77,14 +77,15 @@ def calculate_and_display_metrics(day_data_combined, day_data_services, c):
         Ls_mmc = Lq + (arrival_rate / service_rate)
         data["Lq_mmc"] = Lq_mmc
         data["Ls_mmc"] = Ls_mmc
-        print(f"{day.ljust(10)}\t\t{data['Ws']:.4f}\t\t{data['Wq']:.4f}\t\t{data['Lq_mmc']:.4f}\t\t{data['Ls_mmc']:.4f}")
+        print(f"{day.ljust(14)}\t\t{data['Ws']:.4f}\t\t{data['Wq']:.4f}\t\t{data['Lq_mmc']:.4f}\t\t{data['Ls_mmc']:.4f}")
 
 print("\n")
 calculate_and_display_metrics(day_data_combined, day_data_services, 4)
 
 print ("Above works\n")
 
-def get_mmc_traffic_intensity(day_data_services, c):
+print("TRAFFIC INTENSITY = ρ")
+def get_mmc_traffic_intensity(c):
     intensity_dict = {}
     for day, data in day_data_services.items():
         arrival = data["arrival_rate"]
@@ -97,11 +98,52 @@ def get_mmc_traffic_intensity(day_data_services, c):
     
     return intensity_dict
 
-intensity_dict = get_mmc_traffic_intensity(day_data_services, 4)
+intensity_dict = get_mmc_traffic_intensity(4)
+print(intensity_dict)
 print ("\nAbove works\n")
 
-def get_prob_of_zero(c):
-    pass
+
+print("PROBABILITY OF ZERO = π")
+def calculate_probability_of_zero(num_servers):
+    probability_dict = {}
+    for day, data in intensity_dict.items():
+        probability_of_zero = []
+        for i in range(0, num_servers):
+            term = (data[i]**i) / math.factorial(i)
+            probability_of_zero.append(math.exp(-data[i]) * sum(term for i in range(num_servers - i + 1)))
+        probability_dict[day] = probability_of_zero
+    return probability_dict
+
+
+probability_of_zero_dict = calculate_probability_of_zero(4)
+print(probability_of_zero_dict)
+print ("\nAbove works\n")
+
+
+
+
+def get_mmc_Lq(c):
+    data_rho = []
+    data_prob = []
+    days_of_week = []
+    for day_rho, data_rho_i in intensity_dict.items():
+        data_rho.append(data_rho_i)
+        days_of_week.append(day_rho)
+    for day_prob, data_prob_i in probability_of_zero_dict.items():
+        data_prob.append(data_prob_i)
+    
+    lq_dict = {}
+            
+    for i in range(c):
+        for j in range(5):
+            val = (data_rho[j][i]**(i + 1) / (math.factorial(i) * (i - data_rho[j][i])**2)) * data_prob[j][i]
+            key = (days_of_week[j], i + 1)
+            lq_dict[key] = val
+
+    print(lq_dict)
+
+
+lq_dict = get_mmc_Lq(4)
 
 
 '''
@@ -115,7 +157,7 @@ print("\n")
 print(f"Day\t\t\tLq_mmc")
 print("-" * 50)
 for day, data in day_data_combined.items():
-    print(f"{day.ljust(10)}\t\t{Lq_mmc:.4f}")
+    print(f"{day.ljust(10)}\t\t{Lq_mmc:.4f}"
 
 print("\n")
 print(f"Day\t\t\tLs_mmc")
@@ -189,3 +231,4 @@ for day in day_data_combined.keys():
         print(f"{num_dispensers}\t\t\t{utilization:.3f}\t\t\t{Ws:.3f}\t\t\t{Wq:.3f}\t\t\t{day}")
 
 '''
+
