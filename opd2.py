@@ -80,8 +80,31 @@ print("Day\t\t\tWs (h)\t\tWq (h)")
 print("-" * 50)
 for day, data in day_data_combined.items():
     print(f"{day.ljust(10)}\t\t{data['Ws']:.4f}\t\t{data['Wq']:.4f}")
-    
 
+print("\n")
+print ("Above works\n")
+
+def get_mmc_traffic_intensity(day_data_services, c):
+    intensity_dict = {}
+    for day, data in day_data_services.items():
+        arrival = data["arrival_rate"]
+        service = data["service_rate"]
+        data_list = []
+        for i in range(1, c+1):
+            val = arrival / (i * service)
+            data_list.append(val)
+        intensity_dict[day] = data_list
+    
+    return intensity_dict
+
+intensity_dict = get_mmc_traffic_intensity(day_data_services, 4)
+print ("\nAbove works\n")
+
+def get_prob_of_zero(c):
+    pass
+
+
+'''
 print("\n")
 print(f"Day\t\t\tLs_calc")
 print("-" * 50)
@@ -130,7 +153,7 @@ def calculate_values_for_servers(day, num_servers):
     Wq = calculate_waiting_time_in_queue(Lq, arrival_rate)
 
     return utilization, Ws, Wq
-
+print("\n")
 # Display the table header
 print("Number of Servers\tUtilization (%)\tMean Time in System\tMean Time in Queue\tDay")
 print("-" * 90)
@@ -165,3 +188,4 @@ for day in day_data_combined.keys():
         utilization, Ws, Wq = calculate_values_for_dispensers(day, num_dispensers)
         print(f"{num_dispensers}\t\t\t{utilization:.3f}\t\t\t{Ws:.3f}\t\t\t{Wq:.3f}\t\t\t{day}")
 
+'''
