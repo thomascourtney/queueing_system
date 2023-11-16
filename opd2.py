@@ -58,30 +58,30 @@ day_data_combined = {
 
 
 
-for day, data in day_data_combined.items():
-    arrival_rate = day_data_services[day]["arrival_rate"]
-    service_rate = day_data_services[day]["service_rate"]
-    Ls = day_data_combined[day]["Ls"]
-    Lq = day_data_combined[day]["Lq"]
-    data["Lq_calc"] = Lq
-    data["Ls_calc"] = Ls
-    data["Ws"] = Ls / arrival_rate
-    data["Wq"] = Lq / arrival_rate
-    c = 1  # Number of servers
-    rho = arrival_rate / (c * service_rate)
-    W = data["Ls"] / arrival_rate
-    Lq_mmc = ((arrival_rate * W)**c) / (math.factorial(c) * (1 - rho)**2)
-    Lq= data["Lq"]
-    Ls_mmc = Lq + (arrival_rate / service_rate)
+def calculate_and_display_metrics(day_data_combined, day_data_services, c):
+    print("\nDay\t\t\tWs (h)\t\tWq (h)\t\tLq_mmc\t\tLs_mmc")
+    print("-" * 70)
+
+    for day, data in day_data_combined.items():
+        arrival_rate = day_data_services[day]["arrival_rate"]
+        service_rate = day_data_services[day]["service_rate"]
+        Ls = day_data_combined[day]["Ls"]
+        Lq = day_data_combined[day]["Lq"]
+        data["Lq_calc"] = Lq
+        data["Ls_calc"] = Ls
+        data["Ws"] = Ls / arrival_rate
+        data["Wq"] = Lq / arrival_rate
+        rho = arrival_rate / (c * service_rate)
+        W = Ls / arrival_rate
+        Lq_mmc = ((arrival_rate * W) ** c) / (math.factorial(c) * (1 - rho) ** 2)
+        Ls_mmc = Lq + (arrival_rate / service_rate)
+        data["Lq_mmc"] = Lq_mmc
+        data["Ls_mmc"] = Ls_mmc
+        print(f"{day.ljust(10)}\t\t{data['Ws']:.4f}\t\t{data['Wq']:.4f}\t\t{data['Lq_mmc']:.4f}\t\t{data['Ls_mmc']:.4f}")
 
 print("\n")
-# Display the results nicely
-print("Day\t\t\tWs (h)\t\tWq (h)")
-print("-" * 50)
-for day, data in day_data_combined.items():
-    print(f"{day.ljust(10)}\t\t{data['Ws']:.4f}\t\t{data['Wq']:.4f}")
+calculate_and_display_metrics(day_data_combined, day_data_services, 4)
 
-print("\n")
 print ("Above works\n")
 
 def get_mmc_traffic_intensity(day_data_services, c):
