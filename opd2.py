@@ -126,9 +126,14 @@ print ("\nAbove works\n")
 
 print("Lq")
 def get_mmc_Lq(c):
+    # list of size 5x4 
     data_rho = []
+    # list of size 5x4
     data_prob = []
+    # list of size 1x5
     days_of_week = []
+
+    lq_dict = {}
 
     for day_rho, data_rho_i in intensity_dict.items():
         data_rho.append(data_rho_i)
@@ -137,19 +142,23 @@ def get_mmc_Lq(c):
     for day_prob, data_prob_i in probability_of_zero_dict.items():
         data_prob.append(data_prob_i)
 
-    lq_dict = {}
+    
 
-    for i in range(c):
-        for j in range(5):
-            val = (data_rho[j][i]**(i + 1) / (m.factorial(i) * (i - data_rho[j][i])**2)) * data_prob[j][i]
-            key = (days_of_week[j], i + 1)
-            lq_dict[key] = val
+    for i in range(len(data_rho)):
+        lq_values = []
+        for j in range(len(data_rho[i])):
+            val = (((data_rho[i][j])**(c+1)) / (m.factorial(c-1) * (c - data_rho[i][j])**2)) * data_prob[i][j]
+            lq_values.append(val)
+        
+        lq_dict[days_of_week[i]] = lq_values
 
-    return data_rho
+    return lq_dict
+
 
 
 lq_dict = get_mmc_Lq(4)
 print(lq_dict)
+print ("\nAbove works\n")
 
  
 print("Ls")
