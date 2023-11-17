@@ -1,4 +1,4 @@
-import math
+import math as m
 
 day_data_services = {
     "Monday": {
@@ -73,7 +73,7 @@ def calculate_and_display_metrics(day_data_combined, day_data_services, c):
         data["Wq"] = Lq / arrival_rate
         rho = arrival_rate / (c * service_rate)
         W = Ls / arrival_rate
-        Lq_mmc = ((arrival_rate * W) ** c) / (math.factorial(c) * (1 - rho) ** 2)
+        Lq_mmc = ((arrival_rate * W) ** c) / (m.factorial(c) * (1 - rho) ** 2)
         Ls_mmc = Lq + (arrival_rate / service_rate)
         data["Lq_mmc"] = Lq_mmc
         data["Ls_mmc"] = Ls_mmc
@@ -104,14 +104,17 @@ print ("\nAbove works\n")
 
 
 print("PROBABILITY OF ZERO = π")
-def calculate_probability_of_zero(num_servers):
+def calculate_probability_of_zero(c):
     probability_dict = {}
     for day, data in intensity_dict.items():
-        probability_of_zero = []
-        for i in range(0, num_servers):
-            term = (data[i]**i) / math.factorial(i)
-            probability_of_zero.append(math.exp(-data[i]) * sum(term for i in range(num_servers - i + 1)))
-        probability_dict[day] = probability_of_zero
+        val=0
+        probability_list = []
+        for d in data:
+            rho = d
+            val += ((rho**1)/m.factorial(1))+((rho**c)/m.factorial(c)*(1-rho))
+            val = val ** -1
+            probability_list.append(val)
+        probability_dict[day] = probability_list
     return probability_dict
 
 
@@ -138,16 +141,16 @@ def get_mmc_Lq(c):
 
     for i in range(c):
         for j in range(5):
-            val = (data_rho[j][i]**(i + 1) / (math.factorial(i) * (i - data_rho[j][i])**2)) * data_prob[j][i]
+            val = (data_rho[j][i]**(i + 1) / (m.factorial(i) * (i - data_rho[j][i])**2)) * data_prob[j][i]
             key = (days_of_week[j], i + 1)
             lq_dict[key] = val
 
-    return lq_dict
+    return data_rho
 
 
 lq_dict = get_mmc_Lq(4)
 print(lq_dict)
-print ("\nAbove works\n")
+
  
 print("Ls")
 def get_mmc_lc(c):
@@ -175,6 +178,7 @@ def get_mmc_lc(c):
 lc_list = get_mmc_lc(4)
 print(lc_list)
 print("\n\n")
+"""
 
 print("Wq")
 def get_mmc_wq(c):
@@ -219,6 +223,8 @@ def get_mmc_ws(c):
 
 
     return lq_dict
+
+    """
 
 
 
