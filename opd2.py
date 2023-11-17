@@ -121,7 +121,7 @@ print ("\nAbove works\n")
 
 
 
-
+print("Lq")
 def get_mmc_Lq(c):
     data_rho = []
     data_prob = []
@@ -149,8 +149,8 @@ lq_dict = get_mmc_Lq(4)
 print(lq_dict)
 print ("\nAbove works\n")
  
-
-def get_lc(c):
+print("Ls")
+def get_mmc_lc(c):
     # this list has 5 pairs of arrival/service rates for Monday-Friday 
     arrival_service = []
     # this list has 20 values of lq
@@ -172,9 +172,53 @@ def get_lc(c):
     return result_list
 
 
-get_lc(4)
+lc_list = get_mmc_lc(4)
+print(lc_list)
+print("\n\n")
+
+print("Wq")
+def get_mmc_wq(c):
+    data_rho = []
+    data_prob = []
+    days_of_week = []
+
+    for day_rho, data_rho_i in intensity_dict.items():
+        data_rho.append(data_rho_i)
+        days_of_week.append(day_rho)
+    
+    for day, data in day_data_services.items():
+        arrival = data["arrival_rate"]
+
+    for i in range(c):
+        val = ((data_rho[i]**(i + 1)*(1-data_rho[i])) / (i) * (i - data_rho[i]2)) * (1/arrival)
+        key = (days_of_week[j], i + 1)
+        lq_dict[key] = val
 
 
+    return lq_dict
+
+print("\n\n")
+
+print("Ws")
+def get_mmc_ws(c):
+    data_rho = []
+    data_prob = []
+    days_of_week = []
+
+    for day_rho, data_rho_i in intensity_dict.items():
+        data_rho.append(data_rho_i)
+        days_of_week.append(day_rho)
+    
+    for day, data in day_data_services.items():
+        arrival = data["arrival_rate"]
+
+    for i in range(c):
+        val = ((data_rho[i]**(i + 1)*(1-data_rho[i])) / (i) * (i - data_rho[i]2)) * (1/arrival)
+        key = (days_of_week[j], i + 1)
+        lq_dict[key] = val
+
+
+    return lq_dict
 
 
 
