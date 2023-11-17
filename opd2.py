@@ -148,6 +148,7 @@ def get_mmc_Lq(c):
 lq_dict = get_mmc_Lq(4)
 print(lq_dict)
 print ("\nAbove works\n")
+ 
 
 def get_lc(c):
     # this list has 5 pairs of arrival/service rates for Monday-Friday 
@@ -160,20 +161,21 @@ def get_lc(c):
 
     for day, data in lq_dict.items():
         data_list.append(data)
-    lc_dict = {}
+    
     fraction = []
     for items in arrival_service:
         arrival, service = items
-        val = arrival / service
+        val = arrival / service*c
         fraction.append(val)
-
-    for i in range()
-    print(fraction)
-
-            
+    
+    result_list = [x * y for x, y in zip(fraction * 4, data_list)]
+    return result_list
 
 
 get_lc(4)
+
+
+
 
 
 '''
