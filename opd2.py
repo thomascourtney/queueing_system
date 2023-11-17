@@ -126,24 +126,54 @@ def get_mmc_Lq(c):
     data_rho = []
     data_prob = []
     days_of_week = []
+
     for day_rho, data_rho_i in intensity_dict.items():
         data_rho.append(data_rho_i)
         days_of_week.append(day_rho)
+
     for day_prob, data_prob_i in probability_of_zero_dict.items():
         data_prob.append(data_prob_i)
-    
+
     lq_dict = {}
-            
+
     for i in range(c):
         for j in range(5):
             val = (data_rho[j][i]**(i + 1) / (math.factorial(i) * (i - data_rho[j][i])**2)) * data_prob[j][i]
             key = (days_of_week[j], i + 1)
             lq_dict[key] = val
 
-    print(lq_dict)
+    return lq_dict
 
 
 lq_dict = get_mmc_Lq(4)
+print(lq_dict)
+print ("\nAbove works\n")
+
+def get_lc(c):
+    # this list has 5 pairs of arrival/service rates for Monday-Friday 
+    arrival_service = []
+    # this list has 20 values of lq
+    data_list = []
+    for day_c, data_c in day_data_combined.items():
+        tuple_ = (day_data_services[day_c]["arrival_rate"], day_data_services[day_c]["service_rate"])
+        arrival_service.append(tuple_)
+
+    for day, data in lq_dict.items():
+        data_list.append(data)
+    lc_dict = {}
+    fraction = []
+    for items in arrival_service:
+        arrival, service = items
+        val = arrival / service
+        fraction.append(val)
+
+    for i in range()
+    print(fraction)
+
+            
+
+
+get_lc(4)
 
 
 '''
