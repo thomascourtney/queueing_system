@@ -162,30 +162,26 @@ print ("\nAbove works\n")
 
  
 print("Ls")
-def get_mmc_lc(c):
+def get_mmc_ls(c):
     # this list has 5 pairs of arrival/service rates for Monday-Friday 
-    arrival_service = []
+    arrival_service = {}
     # this list has 20 values of lq
     data_list = []
-    for day_c, data_c in day_data_combined.items():
-        tuple_ = (day_data_services[day_c]["arrival_rate"], day_data_services[day_c]["service_rate"])
-        arrival_service.append(tuple_)
+    for day_c, data_c in lq_dict.items():
+        rate = day_data_services[day_c]["arrival_rate"]/(day_data_services[day_c]["service_rate"]*c)
+        arrival_service[day_c] = rate
 
     for day, data in lq_dict.items():
         data_list.append(data)
-    
-    fraction = []
-    for items in arrival_service:
-        arrival, service = items
-        val = arrival / service*c
-        fraction.append(val)
-    
-    result_list = [x * y for x, y in zip(fraction * 4, data_list)]
-    return result_list
 
 
-lc_list = get_mmc_lc(4)
-print(lc_list)
+    
+    #result_list = [x * y for x, y in zip(arrival_service * 4, data_list)]
+    print(arrival_service)
+    print(data_list)
+
+
+get_mmc_ls(4)
 print("\n\n")
 """
 
