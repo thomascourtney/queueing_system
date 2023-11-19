@@ -1,4 +1,5 @@
 import math as m
+import pandas as pd
 
 day_data_services = {
     "Monday": {
@@ -81,24 +82,24 @@ print("\n\n")
 calculate_and_display_metrics(day_data_combined, day_data_services, number_of_queue)
 
 print("\n\n")
-
 print("TRAFFIC INTENSITY = ρ")
 def get_mmc_traffic_intensity(c):
     intensity_dict = {}
+
     for day, data in day_data_services.items():
         arrival = data["arrival_rate"]
         service = data["service_rate"]
-        data_list = []
-        for i in range(1, c + 1):
-            val = arrival / (i * service)
-            data_list.append(val)
+        
+        data_list = [arrival / (i * service) for i in range(1, c + 1)]
+        
         intensity_dict[day] = data_list
-    
+
     return intensity_dict
 
 intensity_dict = get_mmc_traffic_intensity(number_of_queue)
 print(intensity_dict)
 print("\n\n")
+    
 
 print("PROBABILITY OF ZERO = π")
 def calculate_probability_of_zero(c, rho_dict):
@@ -111,9 +112,9 @@ def calculate_probability_of_zero(c, rho_dict):
             probability_of_zero = 0
 
             for i in range(c):
-                probability_of_zero += (m.pow(rho, i) / (m.factorial(i) * (1 - rho)))
+                probability_of_zero += (((rho*c)**i / (m.factorial(i)) + ((c*rho)**c)/(m.factorial(c)*(1-rho))))
 
-            probability_of_zero = 1 / (1 + probability_of_zero)
+            probability_of_zero = 1 / (probability_of_zero)
             probabilities.append(probability_of_zero)
 
         probabilities_dict[key] = probabilities
@@ -125,6 +126,11 @@ probability_of_zero_dict = calculate_probability_of_zero(number_of_queue, intens
 print(probability_of_zero_dict)
 print("\n\n")
 
+server_utilization = {day: [1 - val for val in values] for day, values in probability_of_zero_dict.items()}
+
+print("\nServer Utilization")
+print(server_utilization)
+print("\n\n")
 
 print("Lq")
 def get_mmc_Lq(c):
@@ -222,3 +228,8 @@ def get_mmc_ws(c):
 
 ws = get_mmc_ws(4)
 print(ws)
+
+df = pd.DataFrame(ws)
+df = df.transpose()
+print("\nTable for mean waiting time in system\n")
+print(df)
