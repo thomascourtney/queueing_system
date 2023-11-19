@@ -102,21 +102,27 @@ intensity_dict = get_mmc_traffic_intensity(4)
 print(intensity_dict)
 print("\nAbove works\n")
 
-print("PROBABILITY OF ZERO = π")
-def calculate_probability_of_zero(c):
-    probability_dict = {}
-    for day, data in intensity_dict.items():
-        val = 0
-        probability_list = []
-        for rho in data:
-            val += ((rho ** 1) / m.factorial(1)) + ((rho ** c) / (m.factorial(c) * (1 - rho)))
-            val = val ** -1
-            probability_list.append(val)
-        probability_dict[day] = probability_list
-    return probability_dict
+def calculate_probability_of_zero(c, rho_dict):
+    probabilities_dict = {}
+
+    for key, rho_values in rho_dict.items():
+        probabilities = []
+
+        for rho in rho_values:
+            probability_of_zero = 0
+
+            for i in range(c):
+                probability_of_zero += (m.pow(rho, i) / (m.factorial(i) * (1 - rho)))
+
+            probability_of_zero = 1 / (1 + probability_of_zero)
+            probabilities.append(probability_of_zero)
+
+        probabilities_dict[key] = probabilities
+    
+    return probabilities_dict
 
 
-probability_of_zero_dict = calculate_probability_of_zero(4)
+probability_of_zero_dict = calculate_probability_of_zero(4, intensity_dict)
 print(probability_of_zero_dict)
 print("\nAbove works\n")
 
