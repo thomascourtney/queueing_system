@@ -164,26 +164,30 @@ print ("\nAbove works\n")
 print("Ls")
 def get_mmc_ls(c):
     # this list has 5 pairs of arrival/service rates for Monday-Friday 
-    arrival_service = {}
-    # this list has 20 values of lq
+    arrival_service = []
+    # this 2d list of size 5X4 is the Monday[1, 2, 3, 4], ... , Friday[1, 2, 3, 4]
     data_list = []
+
     for day_c, data_c in lq_dict.items():
         rate = day_data_services[day_c]["arrival_rate"]/(day_data_services[day_c]["service_rate"]*c)
-        arrival_service[day_c] = rate
+        arrival_service.append(rate)
 
     for day, data in lq_dict.items():
         data_list.append(data)
-
-
     
-    #result_list = [x * y for x, y in zip(arrival_service * 4, data_list)]
-    print(arrival_service)
-    print(data_list)
+    result = [
+    [arrival_service[i] * element for element in row]
+    for i, row in enumerate(data_list)]
 
+    return result
 
-get_mmc_ls(4)
+Ls = get_mmc_ls(4)
+print(Ls)
 print("\n\n")
-"""
+
+print ("\nAbove works\n")
+
+
 
 print("Wq")
 def get_mmc_wq(c):
@@ -228,94 +232,4 @@ def get_mmc_ws(c):
 
 
     return lq_dict
-
-    """
-
-
-
-'''
-print("\n")
-print(f"Day\t\t\tLs_calc")
-print("-" * 50)
-for day, data in day_data_combined.items():
-    print(f"{day.ljust(10)}\t\t{data['Ls_calc']:.4f}")
-
-print("\n")
-print(f"Day\t\t\tLq_mmc")
-print("-" * 50)
-for day, data in day_data_combined.items():
-    print(f"{day.ljust(10)}\t\t{Lq_mmc:.4f}"
-
-print("\n")
-print(f"Day\t\t\tLs_mmc")
-print("-" * 50)
-for day, data in day_data_combined.items():
-    print(f"{day.ljust(10)}\t\t{Ls_mmc:.4f}")
-
-print("\n")
-print("Day\t\tWs")
-print("-" * 20)
-for day, data in day_data_combined.items():
-    service_rate = day_data_services[day]["service_rate"]
-    Wq = data["Wq"]
-    Ws = Wq + (1 / service_rate)
-    print(f"{day.ljust(10)}\t\t{Ws:.4f}")
-
-
-def calculate_utilization(arrival_rate, service_rate, num_servers):
-    return (arrival_rate / (service_rate * num_servers)) * 100
-
-def calculate_waiting_time_in_system(Ls, arrival_rate):
-    return Ls / arrival_rate
-
-def calculate_waiting_time_in_queue(Lq, arrival_rate):
-    return Lq / arrival_rate
-
-def calculate_values_for_servers(day, num_servers):
-    arrival_rate = day_data_services[day]["arrival_rate"]
-    service_rate = day_data_services[day]["service_rate"]
-    Ls = day_data_combined[day]["Ls"]
-    Lq = day_data_combined[day]["Lq"]
-
-    utilization = calculate_utilization(arrival_rate, service_rate, num_servers)
-    Ws = calculate_waiting_time_in_system(Ls, arrival_rate)
-    Wq = calculate_waiting_time_in_queue(Lq, arrival_rate)
-
-    return utilization, Ws, Wq
-print("\n")
-# Display the table header
-print("Number of Servers\tUtilization (%)\tMean Time in System\tMean Time in Queue\tDay")
-print("-" * 90)
-
-# Calculate and display values for different numbers of servers
-for day in day_data_combined.keys():
-    for num_servers in range(1, 5):
-        utilization, Ws, Wq = calculate_values_for_servers(day, num_servers)
-        print(f"{num_servers}\t\t\t{utilization:.3f}\t\t\t{Ws:.3f}\t\t\t{Wq:.3f}\t\t\t{day}")
-
-
-
-def calculate_values_for_dispensers(day, num_dispensers):
-    arrival_rate = day_data_services[day]["arrival_rate"]
-    service_rate = day_data_services[day]["service_rate"]
-    Ls = day_data_combined[day]["Ls"]
-    Lq = day_data_combined[day]["Lq"]
-
-    utilization = calculate_utilization(arrival_rate, service_rate, num_dispensers)
-    Ws = calculate_waiting_time_in_system(Ls, arrival_rate)
-    Wq = calculate_waiting_time_in_queue(Lq, arrival_rate)
-
-    return utilization, Ws, Wq
-
-# Display the table header
-print("Number of Dispensers\tUtilization (%)\tMean Time in System\tMean Time in Queue\tDay")
-print("-" * 90)
-
-# Calculate and display values for different numbers of dispensers
-for day in day_data_combined.keys():
-    for num_dispensers in range(1, 5):
-        utilization, Ws, Wq = calculate_values_for_dispensers(day, num_dispensers)
-        print(f"{num_dispensers}\t\t\t{utilization:.3f}\t\t\t{Ws:.3f}\t\t\t{Wq:.3f}\t\t\t{day}")
-
-'''
 
