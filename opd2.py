@@ -77,10 +77,10 @@ def calculate_and_display_metrics(day_data_combined, day_data_services, c):
         print(f"{day.ljust(14)}\t\t{data['Ws']:.4f}\t\t{data['Wq']:.4f}")
 
 
-print("\n")
+print("\n\n")
 calculate_and_display_metrics(day_data_combined, day_data_services, number_of_queue)
 
-print("Above works\n")
+print("\n\n")
 
 print("TRAFFIC INTENSITY = ρ")
 def get_mmc_traffic_intensity(c):
@@ -98,7 +98,7 @@ def get_mmc_traffic_intensity(c):
 
 intensity_dict = get_mmc_traffic_intensity(number_of_queue)
 print(intensity_dict)
-print("\nAbove works\n")
+print("\n\n")
 
 print("PROBABILITY OF ZERO = π")
 def calculate_probability_of_zero(c, rho_dict):
@@ -123,7 +123,7 @@ def calculate_probability_of_zero(c, rho_dict):
 
 probability_of_zero_dict = calculate_probability_of_zero(number_of_queue, intensity_dict)
 print(probability_of_zero_dict)
-print("\nAbove works\n")
+print("\n\n")
 
 
 print("Lq")
@@ -145,26 +145,34 @@ def get_mmc_Lq(c):
 
 lq_dict = get_mmc_Lq(number_of_queue)
 print(lq_dict)
-print("\nAbove works\n")
+print("\n\n")
 
  
 print("Ls")
 def get_mmc_ls(c):
+    ls_dict = {}
 
-    result = [
-        [day_data_services[day]["arrival_rate"] / (day_data_services[day]["service_rate"] * c) * element
-        for element in data]
-        for day, data in lq_dict.items()
-    ]
+    for day, data in intensity_dict.items():
+        ls_list = []
+        
+        for rho in data:
 
-    return result
+            for i in range(1, c+1):
+                val = ( (rho * (1 + (((i*rho)**i)/m.factorial(i)*(1-rho))) / (1-rho)**2) )
+            
+            ls_list.append(val)
+        
+        ls_dict[day] = ls_list
+
+
+    return ls_dict
+
 
 
 Ls = get_mmc_ls(number_of_queue)
 print(Ls)
 print("\n\n")
 
-print("Above works\n")
 
 print("Wq")
 def get_mmc_wq(c):
@@ -178,7 +186,9 @@ def get_mmc_wq(c):
     for day_rho, data_rho in intensity_dict.items():
         wq_list = []
         for rho, arrival in zip(data_rho, arrival_list):
-            val = ((rho ** (c + 1) * (1 - rho)) / ((c) * (c - rho))) * (1 / arrival)
+
+            for i in range(1, c+1):
+                val = ((rho ** (i + 1) * (1 - rho)) / ((i) * (i - rho))) * (1 / arrival)
             wq_list.append(val)
         
         wq_dict[day_rho] = wq_list
