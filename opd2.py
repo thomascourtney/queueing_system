@@ -1,6 +1,10 @@
 import math as m
 import pandas as pd
 
+n =  0.07480012950331594/12.22
+
+print(n)
+
 day_data_services = {
     "Monday": {
         "interarrival_time": 4.90,
@@ -109,7 +113,7 @@ def calculate_probability_of_zero(c, rho_dict):
         probabilities = []
 
         for rho in rho_values:
-            probability_of_zero = 0
+            probability_of_zero = 1
 
             for i in range(c):
                 probability_of_zero += (((rho*c)**i / (m.factorial(i)) + ((c*rho)**c)/(m.factorial(c)*(1-rho))))
