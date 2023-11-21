@@ -1,5 +1,7 @@
 import math as m
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 day_data_services = {
@@ -263,3 +265,29 @@ table = create_table(number_of_queue)
 df = pd.DataFrame(table)
 df.set_index("Number of doctors (servers)", inplace=True)
 print(df)
+
+def create_hist(data, y_axis, title):
+    plt.figure(figsize=(7, 5))
+
+    days = df['Day'].unique()
+    num_servers = df.index.unique()
+
+    bar_width = 0.1
+
+    for i, count in enumerate(num_servers):
+        server_data = df[df.index == count]
+        positions = np.arange(len(days)) + bar_width * i
+        plt.bar(positions, server_data[data], width=bar_width, label=f'# of servers = {count}')
+
+    plt.xlabel('Day of the Week')
+    plt.ylabel(y_axis)
+    plt.title(title)
+    plt.xticks(np.arange(len(days)) + bar_width * (len(num_servers) - 1) / 2, days)
+    plt.legend(fontsize="small")
+
+    plt.show()
+
+
+create_hist("Server Utilization", 'Server Utilization', 'Server Utilization for Different Number of Servers')
+create_hist("Mean waiting time in system", "Ws", 'Server Utilization for Different Number of Servers')
+create_hist("Mean waiting time in queues", "Wq", 'Server Utilization for Different Number of Servers')
