@@ -1,9 +1,6 @@
 import math as m
 import pandas as pd
 
-n =  0.07480012950331594/12.22
-
-print(n)
 
 day_data_services = {
     "Monday": {
@@ -143,8 +140,9 @@ def get_mmc_Lq(c):
     for day, data_rho in intensity_dict.items():
         lq_values = []
         for rho, prob in zip(data_rho, probability_of_zero_dict[day]):
+            val = 0
             for i in range(1, c+1):
-                val = (((rho) ** (i + 1))*(1-rho) / (m.factorial(i - 1) * (1 - rho) ** 2)) * prob
+                val += (((rho) ** (i + 1))*(1-rho) / (m.factorial(i - 1) * (1 - rho) ** 2)) * prob
             lq_values.append(val)
 
         lq_dict[day] = lq_values
@@ -166,9 +164,9 @@ def get_mmc_ls(c):
         ls_list = []
         
         for rho in data:
-
+            val = 0
             for i in range(1, c+1):
-                val = ( (rho * (1 + (((i*rho)**i)/m.factorial(i)*(1-rho))) / (1-rho)**2) )
+                val += ( (rho * (1 + (((i*rho)**i)/m.factorial(i)*(1-rho))) / (1-rho)**2) )
             
             ls_list.append(val)
         
@@ -196,9 +194,9 @@ def get_mmc_wq(c):
     for day_rho, data_rho in intensity_dict.items():
         wq_list = []
         for rho, arrival in zip(data_rho, arrival_list):
-
+            val = 0 
             for i in range(1, c+1):
-                val = ((rho ** (i + 1) * (1 - rho)) / ((i) * (i - rho))) * (1 / arrival)
+                val += ((rho ** (i + 1) * (1 - rho)) / ((i) * (i - rho))) * (1 / arrival)
             wq_list.append(val)
         
         wq_dict[day_rho] = wq_list
@@ -222,18 +220,54 @@ def get_mmc_ws(c):
     for day_rho, data_rho in intensity_dict.items():
         wq_list = []
         for rho, arrival in zip(data_rho, arrival_list):
-            
+            val = 0
             for i in range(1, c+1):
-                val = (((rho**(i+1)) + 1-rho) / ((m.factorial(i-1))*((1-rho)**2)*(arrival))) * 1/arrival
+                val += (((rho**(i+1)) + 1-rho) / ((m.factorial(i-1))*((1-rho)**2)*(arrival))) * 1/arrival
             wq_list.append(val)
         ws_dict[day_rho] = wq_list
  
     return ws_dict
 
-ws = get_mmc_ws(4)
+ws = get_mmc_ws(number_of_queue)
 print(ws)
 
-df = pd.DataFrame(ws)
-df = df.transpose()
-print("\nTable for mean waiting time in system\n")
+
+
+def generate_list_recursive(n, current_value=1, current_count=0, result=[]):
+    if current_count == n:
+        return result
+    
+    result.append(current_value)
+
+    return generate_list_recursive(n, current_value, current_count + 1, result) if current_count % 5 != 4 else generate_list_recursive(n, current_value + 1, current_count + 1, result)
+
+my_list = generate_list_recursive(20)
+print(my_list)
+
+
+
+
+def create_table(c):
+    table_dict = {}
+
+    days_of_week = list(wq.keys()) * 4
+
+    wq_list = [d for data_wq in wq.values() for d in data_wq]
+    ws_list = [d_ws for data_ws in ws.values() for d_ws in data_ws]
+    server_list = [d_server for data_server in server_utilization.values() for d_server in data_server]
+
+    table_dict["Number of doctors (servers)"] = my_list
+    table_dict["Server Utilization"] = server_list
+    table_dict["Mean waiting time in system"] = ws_list
+    table_dict["Mean waiting time in queues"] = wq_list
+    table_dict["Day"] = days_of_week
+
+    return table_dict
+
+    
+print("\n\n")
+table = create_table(number_of_queue)
+print(table)
+
+df = pd.DataFrame(table)
 print(df)
