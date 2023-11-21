@@ -261,4 +261,5 @@ table = create_table(number_of_queue)
 
 
 df = pd.DataFrame(table)
+df.set_index("Number of doctors (servers)", inplace=True)
 print(df)
