@@ -79,11 +79,11 @@ def calculate_and_display_metrics(day_data_combined, day_data_services, c):
         print(f"{day.ljust(14)}\t\t{data['Ws']:.4f}\t\t{data['Wq']:.4f}")
 
 
-print("\n\n")
+
 calculate_and_display_metrics(day_data_combined, day_data_services, number_of_queue)
 
-print("\n\n")
-print("TRAFFIC INTENSITY = ρ")
+
+#print("TRAFFIC INTENSITY = ρ")
 def get_mmc_traffic_intensity(c):
     intensity_dict = {}
 
@@ -98,11 +98,10 @@ def get_mmc_traffic_intensity(c):
     return intensity_dict
 
 intensity_dict = get_mmc_traffic_intensity(number_of_queue)
-print(intensity_dict)
-print("\n\n")
+
     
 
-print("PROBABILITY OF ZERO = π")
+#print("PROBABILITY OF ZERO = π")
 def calculate_probability_of_zero(c, rho_dict):
     probabilities_dict = {}
 
@@ -124,16 +123,13 @@ def calculate_probability_of_zero(c, rho_dict):
 
 
 probability_of_zero_dict = calculate_probability_of_zero(number_of_queue, intensity_dict)
-print(probability_of_zero_dict)
-print("\n\n")
+
 
 server_utilization = {day: [1 - val for val in values] for day, values in probability_of_zero_dict.items()}
 
-print("\nServer Utilization")
-print(server_utilization)
-print("\n\n")
 
-print("Lq")
+
+#print("Lq")
 def get_mmc_Lq(c):
     lq_dict = {}
 
@@ -152,11 +148,11 @@ def get_mmc_Lq(c):
 
 
 lq_dict = get_mmc_Lq(number_of_queue)
-print(lq_dict)
-print("\n\n")
+
+
 
  
-print("Ls")
+#print("Ls")
 def get_mmc_ls(c):
     ls_dict = {}
 
@@ -178,11 +174,10 @@ def get_mmc_ls(c):
 
 
 Ls = get_mmc_ls(number_of_queue)
-print(Ls)
-print("\n\n")
 
 
-print("Wq")
+
+#print("Wq")
 def get_mmc_wq(c):
     wq_dict = {}
     arrival_list = []
@@ -205,10 +200,9 @@ def get_mmc_wq(c):
 
 
 wq = get_mmc_wq(number_of_queue)
-print(wq)
-print("\n\n")
 
-print("Ws")
+
+#print("Ws")
 def get_mmc_ws(c):
     ws_dict = {}
     arrival_list = []
@@ -229,7 +223,7 @@ def get_mmc_ws(c):
     return ws_dict
 
 ws = get_mmc_ws(number_of_queue)
-print(ws)
+
 
 
 
@@ -242,9 +236,6 @@ def generate_list_recursive(n, current_value=1, current_count=0, result=[]):
     return generate_list_recursive(n, current_value, current_count + 1, result) if current_count % 5 != 4 else generate_list_recursive(n, current_value + 1, current_count + 1, result)
 
 my_list = generate_list_recursive(20)
-print(my_list)
-
-
 
 
 def create_table(c):
@@ -267,7 +258,7 @@ def create_table(c):
     
 print("\n\n")
 table = create_table(number_of_queue)
-print(table)
+
 
 df = pd.DataFrame(table)
 print(df)
