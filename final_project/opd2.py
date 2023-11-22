@@ -107,13 +107,17 @@ intensity_dict = get_mmc_traffic_intensity(number_of_queue)
 def calculate_probability_of_zero(c, rho_dict):
     probabilities_dict = {}
 
+
     for key, rho_values in rho_dict.items():
         probabilities = []
+
+        for day, data in day_data_services.items():
+            number_of_customers = day_data_services[day]["num_customers"]
 
         for rho in rho_values:
             probability_of_zero = 1
 
-            for i in range(c):
+            for i in range(number_of_customers):
                 probability_of_zero += (((rho*c)**i / (m.factorial(i)) + ((c*rho)**c)/(m.factorial(c)*(1-rho))))
 
             probability_of_zero = 1 / (probability_of_zero)
@@ -125,7 +129,6 @@ def calculate_probability_of_zero(c, rho_dict):
 
 
 probability_of_zero_dict = calculate_probability_of_zero(number_of_queue, intensity_dict)
-
 
 server_utilization = {day: [1 - val for val in values] for day, values in probability_of_zero_dict.items()}
 
