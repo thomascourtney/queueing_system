@@ -12,6 +12,8 @@ class Client:
     def __str__(self):
         return f"Client {self.id}"
 
+
+
 class ServicePoint:
     def __init__(self, id):
         self.id = id
@@ -32,6 +34,8 @@ class ServicePoint:
         self.current_client = None
         return finished_client
 
+
+
 class WaitingQueue:
     def __init__(self):
         self.queue = []
@@ -48,7 +52,9 @@ class WaitingQueue:
     def is_empty(self):
         return len(self.queue) == 0
 
-class MMcSystem:
+
+
+class mmcSystem:
     def __init__(self, daily_data, num_service_points):
         self.daily_data = daily_data
         self.num_service_points = num_service_points
@@ -90,7 +96,7 @@ class MMcSystem:
         data = []
 
         for day, day_info in self.daily_data.items():
-            day_index = list(self.daily_data.keys()).index(day) vb
+            day_index = list(self.daily_data.keys()).index(day)
             row = [day, mean_waiting_time[day_index], mean_service_time[day_index], server_utilization[day_index]]
             data.append(row)
 
@@ -169,13 +175,13 @@ if __name__ == "__main__":
         },
     }
 
-    num_iterations = 200
+    num_iterations = 120
 
     mean_waiting_time_by_servers = []
     mean_service_time_by_servers = []
 
-    for num_service_points in range(1, 5):
-        mmc_system = MMcSystem(daily_data_services, num_service_points)
+    for num_service_points in range(1, 8):
+        mmc_system = mmcSystem(daily_data_services, num_service_points)
         mean_waiting_time, mean_service_time = mmc_system.simulate(num_iterations)
 
         mean_waiting_time_by_servers.append(mean_waiting_time)
@@ -183,7 +189,7 @@ if __name__ == "__main__":
 
     def get_graph(data, mean, label:str):
         for i in range(len(data[0])):
-            plt.plot(range(1, 5), [mean[i] for mean in data], label=f"Day {i+1} - {label}")
+            plt.plot(range(1, 8), [mean[i] for mean in data], label=f"Day {i+1} - {label}")
         plt.xlabel("Number of Servers")
         plt.ylabel("Time (units)")
         plt.title("Simulation Results by Number of Servers")
@@ -199,7 +205,7 @@ if __name__ == "__main__":
         plt.figure(figsize=(10, 6))
 
         num_servers = range(1, len(data[0]) + 1)
-        bar_width = 0.15
+        bar_width = 0.09
 
         for i, mean in enumerate(data):
             x_values = np.arange(len(labels)) + bar_width * i
