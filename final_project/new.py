@@ -1,6 +1,7 @@
 import random
 import matplotlib.pyplot as plt
 import tabulate
+import numpy as np
 
 class Client:
     def __init__(self, id, arrival_time, service_time):
@@ -88,11 +89,13 @@ class MMcSystem:
         headers = ["Day", "Mean Waiting Time", "Mean Service Time", "Server Utilization"]
         data = []
 
-        for day_index, (day, day_info) in enumerate(self.daily_data.items()):
-            row = [day_index + 1, mean_waiting_time[day_index], mean_service_time[day_index], server_utilization[day_index]]
+        for day, day_info in self.daily_data.items():
+            day_index = list(self.daily_data.keys()).index(day) vb
+            row = [day, mean_waiting_time[day_index], mean_service_time[day_index], server_utilization[day_index]]
             data.append(row)
 
         print(tabulate.tabulate(data, headers=headers, tablefmt="grid"))
+
 
     def simulate(self, num_iterations):
         total_simulation_time = 0 
@@ -116,10 +119,13 @@ class MMcSystem:
                     self.total_service_time[day_index] += client.service_time
                     self.num_clients_served[day_index] += 1
 
-        mean_waiting_time = [total_waiting_time / num_clients_served if num_clients_served > 0 else 0
-                             for total_waiting_time, num_clients_served in zip(self.total_waiting_time, self.num_clients_served)]
-        mean_service_time = [total_service_time / num_clients_served if num_clients_served > 0 else 0
-                             for total_service_time, num_clients_served in zip(self.total_service_time, self.num_clients_served)]
+
+        mean_waiting_time = [total_waiting_time / sum(self.num_clients_served) if num_clients_served > 0 else 0
+                     for total_waiting_time, num_clients_served in zip(self.total_waiting_time, self.num_clients_served)]
+        mean_service_time = [total_service_time / sum(self.num_clients_served) if num_clients_served > 0 else 0
+                     for total_service_time, num_clients_served in zip(self.total_service_time, self.num_clients_served)]
+
+
 
         server_utilization = [total_service_time / total_simulation_time if total_simulation_time > 0 else 0
                               for total_service_time in self.total_service_time]
@@ -163,7 +169,7 @@ if __name__ == "__main__":
         },
     }
 
-    num_iterations = 100
+    num_iterations = 200
 
     mean_waiting_time_by_servers = []
     mean_service_time_by_servers = []
@@ -188,10 +194,36 @@ if __name__ == "__main__":
     get_graph(mean_waiting_time_by_servers, mean_waiting_time, "Waiting Time")
 
     get_graph(mean_waiting_time_by_servers, mean_service_time, "Service Time")
-    
-    
+
+    def get_bar_chart(data, labels, title):
+        plt.figure(figsize=(10, 6))
+
+        num_servers = range(1, len(data[0]) + 1)
+        bar_width = 0.15
+
+        for i, mean in enumerate(data):
+            x_values = np.arange(len(labels)) + bar_width * i
+            plt.bar(x_values, mean, width=bar_width, label=f"{i + 1} Servers", alpha=0.7)
+
+        plt.xlabel("Day of the Week")
+        plt.ylabel("Time (units)")
+        plt.title(title)
+        plt.xticks(np.arange(len(labels)) + bar_width * (len(data) - 1) / 2, labels)
+        plt.legend()
+
+        plt.show()
+
+
+
+    get_bar_chart(mean_waiting_time_by_servers, list(daily_data_services.keys()), "Waiting Time")
+    get_bar_chart(mean_service_time_by_servers, list(daily_data_services.keys()), "Service Time")
+
+
+
+            
+        
+        
+
     
 
-   
-
-    
+        
