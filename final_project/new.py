@@ -66,7 +66,7 @@ class mmcSystem:
         self.num_clients_served = [0] * len(daily_data)
 
     def generate_interarrival_time(self, day_index):
-        return random.expovariate(self.daily_data[day_index]["arrival_rate"])
+        return random.expovariate((1/self.daily_data[day_index]["arrival_rate"])*10)
 
     def generate_service_time(self, day):
         return random.expovariate(1 / self.daily_data[day]["service_rate"])
@@ -176,11 +176,12 @@ if __name__ == "__main__":
     }
 
     num_iterations = 120
+    num_servers = 5
 
     mean_waiting_time_by_servers = []
     mean_service_time_by_servers = []
 
-    for num_service_points in range(1, 8):
+    for num_service_points in range(1, num_servers+1):
         mmc_system = mmcSystem(daily_data_services, num_service_points)
         mean_waiting_time, mean_service_time = mmc_system.simulate(num_iterations)
 
@@ -189,7 +190,7 @@ if __name__ == "__main__":
 
     def get_graph(data, mean, label:str):
         for i in range(len(data[0])):
-            plt.plot(range(1, 8), [mean[i] for mean in data], label=f"Server {i+1} - {label}")
+            plt.plot(range(1, num_servers+1), [mean[i] for mean in data], label=f"Server {i+1} - {label}")
         plt.xlabel("Number of Servers")
         plt.ylabel("Time (units)")
         plt.title("Simulation Results by Number of Servers")
