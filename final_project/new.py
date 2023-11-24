@@ -54,7 +54,7 @@ class WaitingQueue:
 
 
 
-class mmcSystem:
+class MMcSystem:
     def __init__(self, daily_data, num_service_points):
         self.daily_data = daily_data
         self.num_service_points = num_service_points
@@ -133,7 +133,7 @@ class mmcSystem:
 
 
 
-        server_utilization = [total_service_time / total_simulation_time if total_simulation_time > 0 else 0
+        server_utilization = [0.01*total_service_time / total_simulation_time if total_simulation_time > 0 else 0
                               for total_service_time in self.total_service_time]
 
         self.output_results_table(mean_waiting_time, mean_service_time, server_utilization)
@@ -175,32 +175,41 @@ if __name__ == "__main__":
         },
     }
 
-    num_iterations = 120
+    num_iterations = 200
     num_servers = 5
 
     mean_waiting_time_by_servers = []
     mean_service_time_by_servers = []
 
     for num_service_points in range(1, num_servers+1):
-        mmc_system = mmcSystem(daily_data_services, num_service_points)
+        mmc_system = MMcSystem(daily_data_services, num_service_points)
         mean_waiting_time, mean_service_time = mmc_system.simulate(num_iterations)
 
         mean_waiting_time_by_servers.append(mean_waiting_time)
         mean_service_time_by_servers.append(mean_service_time)
 
-    def get_graph(data, mean, label:str):
-        for i in range(len(data[0])):
-            plt.plot(range(1, num_servers+1), [mean[i] for mean in data], label=f"Server {i+1} - {label}")
+    def get_line_chart(data, title, days_of_week, max_servers):
+        plt.figure(figsize=(10, 6))
+
+        num_servers = len(data[0])
+        line_styles = ["-", "--", "-.", ":", "-"] 
+        for i in range(len(days_of_week)):
+            plt.plot(range(1, max_servers + 1), [data[j][i] for j in range(max_servers)], label=f"{days_of_week[i]}",
+                    linestyle=line_styles[i % len(line_styles)])
+
         plt.xlabel("Number of Servers")
         plt.ylabel("Time (units)")
-        plt.title("Simulation Results by Number of Servers")
+        plt.title(title)
         plt.legend()
         plt.show()
 
+    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
-    get_graph(mean_waiting_time_by_servers, mean_waiting_time, "Waiting Time")
+    get_line_chart(mean_waiting_time_by_servers, "Mean Waiting Time", days_of_week, num_servers)
+    get_line_chart(mean_service_time_by_servers, "Mean Service Time", days_of_week, num_servers)
 
-    get_graph(mean_waiting_time_by_servers, mean_service_time, "Service Time")
+    
+    
 
     def get_bar_chart(data, labels, title):
         plt.figure(figsize=(10, 6))
