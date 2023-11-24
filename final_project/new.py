@@ -66,7 +66,7 @@ class MMcSystem:
         self.num_clients_served = [0] * len(daily_data)
 
     def generate_interarrival_time(self, day_index):
-        return random.expovariate((1/self.daily_data[day_index]["arrival_rate"])*10)
+        return random.expovariate(1/(self.daily_data[day_index]["arrival_rate"]))
 
     def generate_service_time(self, day):
         return random.expovariate(1 / self.daily_data[day]["service_rate"])
@@ -92,7 +92,7 @@ class MMcSystem:
         return finished_clients
 
     def output_results_table(self, mean_waiting_time, mean_service_time, server_utilization):
-        headers = ["Day", "Mean Waiting Time", "Mean Service Time", "Server Utilization"]
+        headers = ["Day", "Mean Waiting Time", "Mean Service Time", "Server Utilization %"]
         data = []
 
         for day, day_info in self.daily_data.items():
@@ -133,7 +133,7 @@ class MMcSystem:
 
 
 
-        server_utilization = [0.01*total_service_time / total_simulation_time if total_simulation_time > 0 else 0
+        server_utilization = [10*total_service_time / total_simulation_time if total_simulation_time > 0 else 0
                               for total_service_time in self.total_service_time]
 
         self.output_results_table(mean_waiting_time, mean_service_time, server_utilization)
@@ -175,8 +175,8 @@ if __name__ == "__main__":
         },
     }
 
-    num_iterations = 200
-    num_servers = 5
+    num_iterations = 120
+    num_servers = 6
 
     mean_waiting_time_by_servers = []
     mean_service_time_by_servers = []
