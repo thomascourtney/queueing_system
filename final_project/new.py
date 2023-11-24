@@ -66,10 +66,10 @@ class mmcSystem:
         self.num_clients_served = [0] * len(daily_data)
 
     def generate_interarrival_time(self, day_index):
-        return random.expovariate(1 / self.daily_data[day_index]["arrival_rate"])
+        return random.expovariate(self.daily_data[day_index]["arrival_rate"])
 
-    def generate_service_time(self, day_index):
-        return random.expovariate(1 / self.daily_data[day_index]["service_rate"])
+    def generate_service_time(self, day):
+        return random.expovariate(1 / self.daily_data[day]["service_rate"])
 
     def enqueue(self, client, day_index):
         client.arrival_time = self.current_time
@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
     def get_graph(data, mean, label:str):
         for i in range(len(data[0])):
-            plt.plot(range(1, 8), [mean[i] for mean in data], label=f"Day {i+1} - {label}")
+            plt.plot(range(1, 8), [mean[i] for mean in data], label=f"Server {i+1} - {label}")
         plt.xlabel("Number of Servers")
         plt.ylabel("Time (units)")
         plt.title("Simulation Results by Number of Servers")
@@ -209,7 +209,7 @@ if __name__ == "__main__":
 
         for i, mean in enumerate(data):
             x_values = np.arange(len(labels)) + bar_width * i
-            plt.bar(x_values, mean, width=bar_width, label=f"{i + 1} Servers", alpha=0.7)
+            plt.bar(x_values, mean, width=bar_width, label=f"Server {i + 1}", alpha=0.7)
 
         plt.xlabel("Day of the Week")
         plt.ylabel("Time (units)")
