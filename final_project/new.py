@@ -221,8 +221,12 @@ if __name__ == "__main__":
             x_values = np.arange(len(labels)) + bar_width * i
             plt.bar(x_values, mean, width=bar_width, label=f"Server {i + 1}", alpha=0.7)
 
+        if data == mean_waiting_time_by_servers:
+            plt.ylim(400,700)
+
         plt.xlabel("Day of the Week")
         plt.ylabel("Time (units)")
+        
         plt.title(title)
         plt.xticks(np.arange(len(labels)) + bar_width * (len(data) - 1) / 2, labels)
         plt.legend()

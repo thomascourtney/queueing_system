@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 day_data_services = {
     "Monday": {
         "interarrival_time": 4.90,
@@ -205,9 +204,10 @@ def get_mmc_wq(c):
 
 
 wq = get_mmc_wq(number_of_queue)
+print(wq)
 
 
-#print("Ws")
+print("Ws")
 def get_mmc_ws(c):
     ws_dict = {}
     arrival_list = []
@@ -228,6 +228,7 @@ def get_mmc_ws(c):
     return ws_dict
 
 ws = get_mmc_ws(number_of_queue)
+print(ws)
 
 
 
@@ -239,6 +240,7 @@ def generate_list_recursive(n, current_value=1, current_count=0, result=[]):
     result.append(current_value)
 
     return generate_list_recursive(n, current_value, current_count + 1, result) if current_count % 5 != 4 else generate_list_recursive(n, current_value + 1, current_count + 1, result)
+
 
 my_list = generate_list_recursive(20)
 
