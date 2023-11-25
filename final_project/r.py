@@ -18,7 +18,9 @@ class ServicePoint:
         self.busy = False
         self.current_client = None
         self.service_start_time = 0
-        self.total_service_time = 0
+        self.total_service_time = {day: 0 for day in daily_data_services
+        }
+
 
     def serve_client(self, client, current_time):
         self.busy = True
@@ -58,7 +60,7 @@ class MMcSystem:
         self.total_waiting_time = [0] * len(daily_data)
         self.total_service_time = [0] * len(daily_data)
         self.num_clients_served = [0] * len(daily_data)
-        self.total_simulation_time = []
+        self.total_simulation_time = {day: 0 for day in daily_data_services}  # Updated to use a dictionary
 
     def generate_interarrival_time(self, day):
         return random.expovariate(1 / self.daily_data[day]["arrival_rate"])
@@ -86,20 +88,15 @@ class MMcSystem:
                 finished_clients.append((finished_client, service_point.id % len(self.daily_data)))
         return finished_clients
 
-
     def calculate_server_utilization(self):
-        total_busy_time = sum(self.total_service_time)
-        total_simulation_time = sum(self.total_simulation_time)
-        num_servers = self.num_service_points
-
+        total_busy_time = sum(self.total_service_time.values())
+        total_simulation_time = sum(self.total_simulation_time.values())
+        
         if total_simulation_time > 0:
-            for i in range(1, num_servers+1):
-                utilization_percentage = (total_busy_time / total_simulation_time) / i 
-                utilization_percentage -= 1
+            utilization_percentage = (total_busy_time / total_simulation_time) * 100
             return utilization_percentage
         else:
-            return 0
-
+            return 0  # To handle cases where total_simulation_time is zero or negative to avoid division by zero.
 
     def output_results_table(self, mean_waiting_time, mean_service_time, server_utilization):
         headers = ["Day", "Mean Waiting Time", "Mean Service Time", "Server Utilization", "Number of Servers"]
@@ -107,53 +104,46 @@ class MMcSystem:
 
         for day, day_info in self.daily_data.items():
             day_index = list(self.daily_data.keys()).index(day)
-            row = [day, mean_waiting_time[day_index], mean_service_time[day_index], self.num_service_points]
+            row = [day, mean_waiting_time[day_index], mean_service_time[day_index], server_utilization[day], self.num_service_points]
             data.append(row)
 
         utilization_percentage = self.calculate_server_utilization()
 
         print(tabulate.tabulate(data, headers=headers, tablefmt="grid"))
-        print(utilization_percentage)
+        print(f"\nOverall Server Utilization: {utilization_percentage:.2f}%")
 
     def simulate(self, num_iterations):
-        total_simulation_time = 0 
-
         for _ in range(num_iterations):
-            total_simulation_time = 0
-            for day_index, (day, day_info) in enumerate(self.daily_data.items()):
+            for day, day_info in self.daily_data.items():
                 interarrival_time = self.generate_interarrival_time(day)
-                total_simulation_time += interarrival_time 
+                self.total_simulation_time[day] += interarrival_time 
                 self.current_time += interarrival_time
 
                 for _ in range(day_info["num_clients"]):
                     client = Client(id=None, arrival_time=None, service_time=self.generate_service_time(day))
-                    self.enqueue(client, day_index)
+                    self.enqueue(client, list(self.daily_data.keys()).index(day))
 
                 self.serve_clients()
-                self.total_simulation_time.append(total_simulation_time)
-
 
                 finished_clients = self.finish_service()
 
                 for client, service_point_id in finished_clients:
-                    self.total_waiting_time[day_index] += self.current_time - client.arrival_time
-                    self.total_service_time[day_index] += client.service_time
-                    self.num_clients_served[day_index] += 1
-
-            # Append the total simulation time for this iteration
-            self.total_simulation_time.append(total_simulation_time)
+                    self.total_waiting_time[list(self.daily_data.keys()).index(day)] += self.current_time - client.arrival_time
+                    self.total_service_time[day] += client.service_time
+                    self.num_clients_served[list(self.daily_data.keys()).index(day)] += 1
 
         mean_waiting_time = [total_waiting_time / sum(self.num_clients_served) if num_clients_served > 0 else 0
                      for total_waiting_time, num_clients_served in zip(self.total_waiting_time, self.num_clients_served)]
         mean_service_time = [total_service_time / sum(self.num_clients_served) if num_clients_served > 0 else 0
                      for total_service_time, num_clients_served in zip(self.total_service_time, self.num_clients_served)]
 
-        server_utilization = [.01*total_service_time / total_simulation_time if total_service_time > 0 else 0 for total_service_time, total_simulation_time in zip(self.total_service_time, self.total_simulation_time)]
+        server_utilization = [total_service_time / self.total_simulation_time[day] * 100
+                      if self.total_service_time[day] > 0 else 0
+                      for day in self.daily_data]
 
         self.output_results_table(mean_waiting_time, mean_service_time, server_utilization)
 
         return mean_waiting_time, mean_service_time
-
 
 if __name__ == "__main__":
     daily_data_services = {
@@ -190,21 +180,17 @@ if __name__ == "__main__":
     }
 
     num_iterations = 120
-    num_servers = 5
+    num_servers = 6
 
     mean_waiting_time_by_servers = []
     mean_service_time_by_servers = []
-    util = []
 
     for num_service_points in range(1, num_servers+1):
         mmc_system = MMcSystem(daily_data_services, num_service_points)
-
         mean_waiting_time, mean_service_time = mmc_system.simulate(num_iterations)
-        utilization_percentage = mmc_system.calculate_server_utilization()
-        util.append(utilization_percentage)
+
         mean_waiting_time_by_servers.append(mean_waiting_time)
         mean_service_time_by_servers.append(mean_service_time)
-
 
     def get_line_chart(data, title, days_of_week, max_servers):
         plt.figure(figsize=(10, 6))
@@ -219,68 +205,33 @@ if __name__ == "__main__":
         plt.ylabel("Time (units)")
         plt.title(title)
         plt.legend()
-        plt.grid(True)
         plt.show()
 
     days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+
     get_line_chart(mean_waiting_time_by_servers, "Mean Waiting Time", days_of_week, num_servers)
     get_line_chart(mean_service_time_by_servers, "Mean Service Time", days_of_week, num_servers)
-
-
-
-    def plot_server_utilization(data, title):
-       
-        plt.figure(figsize=(10, 6))
-
-        plt.plot(data, label='Server Utilization')
-
-        plt.xlabel("Number of Servers")
-        plt.ylabel("Server Utilization (%)")
-        plt.ylim(0, 1)
-        plt.title(title)
-
-        plt.legend()
-
-        plt.grid(True)
-        plt.show()
-
-
-    plot_server_utilization(util, "Server Utilization for Different Numbers of Servers")
-
 
     def get_bar_chart(data, labels, title):
         plt.figure(figsize=(10, 6))
 
         num_servers = range(1, len(data[0]) + 1)
-        bar_width = 0.05
+        bar_width = 0.09
 
         for i, mean in enumerate(data):
             x_values = np.arange(len(labels)) + bar_width * i
             plt.bar(x_values, mean, width=bar_width, label=f"Server {i + 1}", alpha=0.7)
 
         if data == mean_waiting_time_by_servers:
-            plt.ylim(0,)
+            plt.ylim(400,700)
 
         plt.xlabel("Day of the Week")
         plt.ylabel("Time (units)")
-        
         plt.title(title)
         plt.xticks(np.arange(len(labels)) + bar_width * (len(data) - 1) / 2, labels)
         plt.legend()
 
         plt.show()
 
-
-
     get_bar_chart(mean_waiting_time_by_servers, list(daily_data_services.keys()), "Waiting Time")
     get_bar_chart(mean_service_time_by_servers, list(daily_data_services.keys()), "Service Time")
-
-
-
-            
-        
-        
-
-    
-
-        
