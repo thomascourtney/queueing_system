@@ -102,7 +102,7 @@ class MMcSystem:
 
 
     def output_results_table(self, mean_waiting_time, mean_service_time, server_utilization):
-        headers = ["Day", "Mean Waiting Time", "Mean Service Time", "Server Utilization", "Number of Servers"]
+        headers = ["Day", "Mean Waiting Time", "Mean Service Time", "Number of Servers"]
         data = []
 
         for day, day_info in self.daily_data.items():
@@ -113,7 +113,7 @@ class MMcSystem:
         utilization_percentage = self.calculate_server_utilization()
 
         print(tabulate.tabulate(data, headers=headers, tablefmt="grid"))
-        print(utilization_percentage)
+        
 
     def simulate(self, num_iterations):
         total_simulation_time = 0 
@@ -143,7 +143,7 @@ class MMcSystem:
             # Append the total simulation time for this iteration
             self.total_simulation_time.append(total_simulation_time)
 
-        mean_waiting_time = [total_waiting_time / sum(self.num_clients_served) if num_clients_served > 0 else 0
+        mean_waiting_time = [.1*total_waiting_time / sum(self.num_clients_served) if num_clients_served > 0 else 0
                      for total_waiting_time, num_clients_served in zip(self.total_waiting_time, self.num_clients_served)]
         mean_service_time = [total_service_time / sum(self.num_clients_served) if num_clients_served > 0 else 0
                      for total_service_time, num_clients_served in zip(self.total_service_time, self.num_clients_served)]
@@ -189,12 +189,13 @@ if __name__ == "__main__":
         },
     }
 
-    num_iterations = 120
-    num_servers = 5
+    num_iterations = 130
+    num_servers = 6
 
     mean_waiting_time_by_servers = []
     mean_service_time_by_servers = []
     util = []
+    print(util)
 
     for num_service_points in range(1, num_servers+1):
         mmc_system = MMcSystem(daily_data_services, num_service_points)
@@ -206,6 +207,7 @@ if __name__ == "__main__":
         mean_service_time_by_servers.append(mean_service_time)
 
 
+    print(util)
     def get_line_chart(data, title, days_of_week, max_servers):
         plt.figure(figsize=(10, 6))
 
@@ -223,8 +225,8 @@ if __name__ == "__main__":
         plt.show()
 
     days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+
     get_line_chart(mean_waiting_time_by_servers, "Mean Waiting Time", days_of_week, num_servers)
-    get_line_chart(mean_service_time_by_servers, "Mean Service Time", days_of_week, num_servers)
 
 
 
@@ -274,12 +276,6 @@ if __name__ == "__main__":
 
     get_bar_chart(mean_waiting_time_by_servers, list(daily_data_services.keys()), "Waiting Time")
     get_bar_chart(mean_service_time_by_servers, list(daily_data_services.keys()), "Service Time")
-
-
-
-            
-        
-        
 
     
 
