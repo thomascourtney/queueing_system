@@ -140,7 +140,6 @@ class MMcSystem:
                     self.total_service_time[day_index] += client.service_time
                     self.num_clients_served[day_index] += 1
 
-            # Append the total simulation time for this iteration
             self.total_simulation_time.append(total_simulation_time)
 
         mean_waiting_time = [.1*total_waiting_time / sum(self.num_clients_served) if num_clients_served > 0 else 0
@@ -238,7 +237,6 @@ if __name__ == "__main__":
         plt.ylabel("Server Utilization (%)")
         plt.ylim(0, 1)
         plt.title(title)
-
         plt.legend()
 
         plt.grid(True)
