@@ -195,7 +195,6 @@ if __name__ == "__main__":
     mean_waiting_time_by_servers = []
     mean_service_time_by_servers = []
     util = []
-    print(util)
 
     for num_service_points in range(1, num_servers+1):
         mmc_system = MMcSystem(daily_data_services, num_service_points)
@@ -207,7 +206,6 @@ if __name__ == "__main__":
         mean_service_time_by_servers.append(mean_service_time)
 
 
-    print(util)
     def get_line_chart(data, title, days_of_week, max_servers):
         plt.figure(figsize=(10, 6))
 
